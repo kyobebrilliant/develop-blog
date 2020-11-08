@@ -28,7 +28,6 @@ const Layout = ({ location, title, children }) => {
         © {new Date().getFullYear()}, Built with
         {` `}
         <a href="https://www.gatsbyjs.com">Gatsby</a>
-        <span className={"is-primary nes-text"}>owner doldari</span>
       </footer>
     </div>
   )

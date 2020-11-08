@@ -32,7 +32,7 @@ const About = ({ data, location }) => {
           backgroundColor: "white",
         }}
       >
-        <div style={{ fontFamily: "둥근모꼴", margin: "1rem" }}>
+        <div style={{ fontFamily: "둥근모꼴" }}>
           <ResumeLanguageSelectBox
             value={resumeType}
             whenSelect={{
