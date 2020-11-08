@@ -51,4 +51,12 @@ samp {
 
 .nes-list.is-disc.is-dark li::before {
   color: white;
+
+}
+
+.resume-body-smooth {
+  font-family: var(--font-body);
+}
+.resume-body {
+  font-family: 둥근모꼴, serif;
 }

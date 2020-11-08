@@ -1,17 +1,17 @@
 import { graphql, Link } from "gatsby"
 import React, { useEffect, useState } from "react"
 import Image from "gatsby-image"
-import { withPrefix } from "gatsby-link"
 
 const About = ({ data, location }) => {
-  let classes
-  if (location.pathname === withPrefix("/about")) {
+  console.log(location)
+  if (location.pathname.includes("/about")) {
     require("nes.css/css/nes.min.css")
     require("./about.css")
   }
   const avatar = data?.avatar.childImageSharp?.fixed
   const [resume, setResume] = useState(data?.site.siteMetadata.resume.en)
-  const [resumeType, setResumeType] = useState("en")
+  const [resumeType, setResumeType] = useState("ko")
+  const [isNesFont, setIsNesFont] = useState(true)
   useEffect(() => {
     setResume(data?.site.siteMetadata.resume[resumeType])
   }, [data, resumeType])
@@ -32,12 +32,23 @@ const About = ({ data, location }) => {
           backgroundColor: "white",
         }}
       >
-        <div style={{ fontFamily: "둥근모꼴" }}>
+        <div className={isNesFont ? "resume-body" : "resume-body-smooth"}>
+          <div style={{position: 'relative', right: '10px'}}>
+          <button type={'button'} style={{
+            position: 'fixed',
+            zIndex: 1000,
+            top: '10px',
+            right: '50px'
+          }} className={'nes-btn is-success'} onClick={
+            () => setIsNesFont(prev => !prev)
+          }>폰트 변경</button>
+          </div>
           <ResumeLanguageSelectBox
             value={resumeType}
             whenSelect={{
               en: () => setResumeType("en"),
               ko: () => setResumeType("ko"),
+              adjust: event => setIsNesFont(!event.target.checked),
             }}
           />
           <h1 style={{ paddingLeft: "1em" }}>About</h1>
@@ -125,24 +136,55 @@ const Career = ({ data }) => {
         marginBottom: "1em",
       }}
     >
-      <p className={"nes-text"}>
-        {data.position_title} @ {data.company_name}
-      </p>
-      <p>
+      <div className={"nes-text"}>
+        <span className={"nes-text is-warning"}>{data.position_title}</span>{" "}
+        <Annotation />{" "}
+        <span className={"nes-text is-warning"}>{data.company_name}</span>
+      </div>
+      <div>
         {data.started} ~ {data.ended}
-      </p>
+      </div>
       <div
         style={{ border: "1px solid white", padding: "0.05px", width: "100%" }}
       ></div>
       <div className="lists">
         <ul className="nes-list is-disc is-dark">
           {data.achievement.map((element, index) => (
-            <li
-              style={{ paddingLeft: "0.5em", margin: "0 0 0 1em" }}
+            <div
               key={index}
+              style={{ paddingLeft: "0.5rem", paddingTop: "1rem" }}
             >
-              {element}
-            </li>
+              <div>
+                <span style={{ fontSize: "0.8rem" }}>프로젝트명:</span>{" "}
+                {element.projectName}
+              </div>
+              <div>
+                <span style={{ fontSize: "0.8rem" }}>프로젝트기간:</span>{" "}
+                {element.period}
+              </div>
+              <div>
+                <span style={{ fontSize: "0.8rem" }}>목적:</span>{" "}
+                {element.givenTask}
+              </div>
+              <div style={{ padding: "1em", fontSize: "0.9rem" }}>
+                {element.solution.map((s, index) => (
+                  <div key={index}>
+                    <span style={{ marginLeft: "-1em" }}>- </span>
+                    {`${s}`}
+                  </div>
+                ))}
+              </div>
+              <div
+                style={{
+                  border: "1px solid white",
+                  padding: "0.05px",
+                  width: "33%",
+                  margin: "auto",
+                  marginTop: '1rem',
+                  marginBottom: '1rem'
+                }}
+              />
+            </div>
           ))}
         </ul>
       </div>
@@ -177,35 +219,52 @@ const getClassForBadgeFunction = nameOfBadge => {
 const ResumeLanguageSelectBox = ({ whenSelect, value }) => {
   return (
     <>
-      <div className="nes-container with-title is-centered">
+      <div
+        className="nes-container with-title is-centered"
+        style={{ display: "none" }}
+      >
         <p className="title">
           {value === "ko" ? "언어 변경" : "choose language"}
         </p>
-        <label>
-          <input
-            type="radio"
-            className="nes-radio"
-            name="answer"
-            value={value === "en"}
-            onClick={whenSelect.en}
-          />
-          <span>en</span>
-        </label>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <label>
+            <input
+              type="radio"
+              className="nes-radio"
+              name="answer"
+              checked={value === "en"}
+              onClick={whenSelect.en}
+            />
+            <span>en</span>
+          </label>
 
-        <label>
-          <input
-            type="radio"
-            className="nes-radio"
-            name="answer"
-            value={value === "ko"}
-            onClick={whenSelect.ko}
-          />
-          <span>한글</span>
-        </label>
+          <label>
+            <input
+              type="radio"
+              className="nes-radio"
+              name="answer"
+              checked={value === "ko"}
+              onClick={whenSelect.ko}
+            />
+            <span>한글</span>
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              className="nes-checkbox"
+              name="adjust"
+              onClick={whenSelect.adjust}
+            />
+            <span>{value === "ko" ? "폰트 조정" : "adjust font"}</span>
+          </label>
+        </div>
       </div>
     </>
   )
 }
+
+const Annotation = () => <span className={"nes-text is-primary"}>@</span>
 
 export default About
 

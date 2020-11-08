@@ -23,7 +23,12 @@ export const pageQuery = graphql`
       position_title
       company_name
       company_description
-      achievement
+      achievement {
+          projectName,
+          period,
+          givenTask,
+          solution
+      }
     }
   }
 `
